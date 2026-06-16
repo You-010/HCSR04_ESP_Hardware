@@ -1,0 +1,27 @@
+#######################################
+# Datatypes and Classes (KEYWORD1)
+#######################################
+HCSR04	KEYWORD1
+HCSR04Sensor	KEYWORD1
+HCSR04Controller	KEYWORD1
+DistanceMode	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+begin	KEYWORD2
+stop	KEYWORD2
+readDistanceCm	KEYWORD2
+getDurationUs	KEYWORD2
+addSensor	KEYWORD2
+removeSensor	KEYWORD2
+getLastError	KEYWORD2
+getLastErrorString	KEYWORD2
+
+#######################################
+# Constants and Enums (LITERAL1)
+#######################################
+MEDIAN	LITERAL1
+SINGLE	LITERAL1
+VALID	LITERAL1
+RAW	LITERAL1
