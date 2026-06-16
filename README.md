@@ -4,7 +4,7 @@ Hardware-based and non-blocking HC-SR04 ultrasonic library using native ESP32 MC
 ---
 
 ## Credits & Technical Documentation
-This library is based on the hardware edge-timestamping concepts demonstrated in the official [Espressif ESP-IDF MCPWM Capture HC-SR04 Example](https://github.com/espressif/esp-idf/tree/v4.4.1/examples/peripherals/mcpwm/mcpwm_capture_hc_sr04), updated to support modern ESP-IDF v5+ drivers.
+This library is based on the hardware edge-capture timestamp concepts demonstrated in the official [Espressif ESP-IDF MCPWM Capture HC-SR04 Example](https://github.com/espressif/esp-idf/tree/v4.4.1/examples/peripherals/mcpwm/mcpwm_capture_hc_sr04), updated to support modern ESP-IDF v5+ drivers.
 
 ---
 
