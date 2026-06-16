@@ -1,0 +1,4 @@
+theme: jekyll-theme-cayman
+title: HCSR04 ESP Hardware
+description: Ultrasonic distance sensor library for ESP32 using MCPWM hardware for precise timing.
+show_downloads: true
