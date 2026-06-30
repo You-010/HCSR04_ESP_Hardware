@@ -8,6 +8,11 @@ This library is based on the hardware edge-capture timestamp concepts demonstrat
 
 ---
 
+## Framework Support
+Supports both Arduino and pure ESP-IDF frameworks.
+
+---
+
 ## Hardware Setup
 * **VCC:** 5V (for max range) or 3.3V (convenient, but may reduce range/compatibility).
 * **GND:** Connect to ESP32 Ground.
