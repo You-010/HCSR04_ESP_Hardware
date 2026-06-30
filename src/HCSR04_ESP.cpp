@@ -1,4 +1,9 @@
 #include "HCSR04_ESP.h"
+#include <algorithm>
+#include "esp_attr.h"
+#include "driver/gpio.h"
+#include "esp_rom_sys.h"
+#include "esp_rom_gpio.h"
 #include "soc/mcpwm_periph.h"
 #include "soc/gpio_sig_map.h"
 #include <soc/gpio_struct.h>
@@ -168,8 +173,9 @@ bool HCSR04Sensor::begin() {
     _lastError = OK;
     if (_isManaged || _isActive) return true; 
     if (!registerTriggerUse(this, _trigPin)) { _lastError = ERR_PIN_CONFLICT; return false; }
-    pinMode(_trigPin, OUTPUT);
-    digitalWrite(_trigPin, LOW);
+    gpio_reset_pin((gpio_num_t)_trigPin);
+    gpio_set_direction((gpio_num_t)_trigPin, GPIO_MODE_OUTPUT);
+    gpio_set_level((gpio_num_t)_trigPin, 0);
     if (allocateChannel(_echoPin) == -1) { _lastError = ERR_NO_CHANNELS; return false; }
 
     if (xTaskCreatePinnedToCore(
@@ -201,9 +207,9 @@ bool HCSR04Sensor::pingUs() {
     uint32_t tof_ticks = 0;
     xTaskNotifyWait(0x00, ULONG_MAX, &tof_ticks, 0);
 
-    digitalWrite(_trigPin, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(_trigPin, LOW);
+    gpio_set_level((gpio_num_t)_trigPin, 1);
+    esp_rom_delay_us(10);
+    gpio_set_level((gpio_num_t)_trigPin, 0);
 
     if (xTaskNotifyWait(0x00, ULONG_MAX, &tof_ticks, pdMS_TO_TICKS(_timeoutMs)) == pdTRUE) {
         if (tof_ticks > 0) {
@@ -284,8 +290,9 @@ bool HCSR04Controller::addSensor(HCSR04Sensor* sensor) {
             DEBUG_PRINT("[WARNING] Dynamic add failed: Pin %d conflict!\n", sensor->_trigPin);
             _lastError = ERR_PIN_CONFLICT; return false; 
         }
-        pinMode(sensor->_trigPin, OUTPUT);
-        digitalWrite(sensor->_trigPin, LOW);
+        gpio_reset_pin((gpio_num_t)sensor->_trigPin);
+        gpio_set_direction((gpio_num_t)sensor->_trigPin, GPIO_MODE_OUTPUT);
+        gpio_set_level((gpio_num_t)sensor->_trigPin, 0);
         sensor->_timerClkHz = this->_timerClkHz;
     }
     sensor->_isManaged = true; 
@@ -337,8 +344,9 @@ bool HCSR04Controller::begin(bool failOnConflict) {
     while (i < _sensorCount) {
         HCSR04Sensor* sensor = _sensors[i];
         if (registerTriggerUse(this, sensor->_trigPin)) {
-            pinMode(sensor->_trigPin, OUTPUT);
-            digitalWrite(sensor->_trigPin, LOW);
+            gpio_reset_pin((gpio_num_t)sensor->_trigPin);
+            gpio_set_direction((gpio_num_t)sensor->_trigPin, GPIO_MODE_OUTPUT);
+            gpio_set_level((gpio_num_t)sensor->_trigPin, 0);
             i++;
         } else {
             DEBUG_PRINT("[WARNING] Controller skipping Sensor (Trig: %d, Echo: %d) due to Trigger Pin Conflict!\n", 
@@ -393,7 +401,9 @@ void HCSR04Controller::processControllerLoop() {
 }
 
 void HCSR04Controller::updateHardwareSignalRouting(uint8_t echoPin) {
-    pinMode(echoPin, INPUT_PULLDOWN);
+    gpio_reset_pin((gpio_num_t)echoPin);
+    gpio_set_direction((gpio_num_t)echoPin, GPIO_MODE_INPUT);
+    gpio_set_pull_mode((gpio_num_t)echoPin, GPIO_PULLDOWN_ONLY);
     esp_rom_gpio_connect_in_signal(echoPin, _cachedSignalIdx, false);
 
     _isrContext[0] = (void*)_taskHandle;

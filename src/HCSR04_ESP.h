@@ -7,19 +7,20 @@
 #ifndef HCSR04_ESP_H
 #define HCSR04_ESP_H
 
-#include <Arduino.h>
-
-#include <soc/soc_caps.h> 
+#include <array>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "soc/clk_tree_defs.h" 
+#include "soc/soc_caps.h"
 #if !defined(SOC_MCPWM_SUPPORTED) || (SOC_MCPWM_SUPPORTED == 0)
   #error "Compilation Failed: The selected ESP32 variant does not feature hardware MCPWM modules. This library cannot be used with this board."
 #endif
 
 #include <driver/mcpwm_cap.h>
-#include <array> 
 
-#define HCSR04_DEBUG 1 
+#define HCSR04_DEBUG 0
 #if HCSR04_DEBUG
-  #define DEBUG_PRINT(...) Serial.printf(__VA_ARGS__)
+  #define DEBUG_PRINT(...) printf(__VA_ARGS__)
 #else
   #define DEBUG_PRINT(...) 
 #endif
